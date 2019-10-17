@@ -1,26 +1,22 @@
 {
-  "name": "Getting Started Example",
+  "name": "CodeCal",
   "version": "1.0",
-  "description": "Build an Extension!",
+  "description": "See what's next on your Codesmith schedule!",
   "permissions": ["activeTab", "declarativeContent", "storage"],
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
   "browser_action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "images/get_started16.png",
-      "32": "images/get_started32.png",
-      "48": "images/get_started48.png",
-      "128": "images/get_started128.png"
+      "16": "images/codesmithBtn16.png",
+      "32": "images/codesmithBtn32.png",
+      "48": "images/codesmithBtn48.png",
+      "128": "images/codesmithBtn128.png"
     }
   },
   "icons": {
-    "16": "images/get_started16.png",
-    "32": "images/get_started32.png",
-    "48": "images/get_started48.png",
-    "128": "images/get_started128.png"
+    "16": "images/codesmithBtn16.png",
+    "32": "images/codesmithBtn32.png",
+    "48": "images/codesmithBtn48.png",
+    "128": "images/codesmithBtn128.png"
   },
   "manifest_version": 2
 }

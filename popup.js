@@ -12,6 +12,27 @@ fetch('http://slack-server.elasticbeanstalk.com/calendar/LA/32')
     let minIndex = 0;
     let maxIndex = 0;
     let day = 'Monday';
+    let currentDateValue = 0;
+    let minDateValue = 0;
+    let maxDateValue = 0;
+    let beginningDate = 'Oct 07 2019'
+    let endDate = 'Nov 02 2019'
+
+    function convert(d) {
+      let total = '';
+      if (d[0] + d[1] + d[2] === 'Oct') {
+        total += '10';
+      } else if (d[0] + d[1] + d[2] === 'Nov') {
+        total += '11';
+      }
+      total += d[4] + d[5];
+      return parseInt(total);
+    }
+    minDateValue = convert(beginningDate);
+    maxDateValue = convert(endDate);
+
+
+
     for (let x in res) {
       maxIndex++;
     }
@@ -98,62 +119,66 @@ fetch('http://slack-server.elasticbeanstalk.com/calendar/LA/32')
 
     function recieveEvent(futureDate) {
       // console.log(res);
-      let name = '';
-      let start = '';
-      let startHour = '';
-      let end = '';
-      let endHour = '';
-      // console.log(res);
-      // console.log(res[futureDate]);
-      console.log('Right before for loop: ', futureDate);
-      for (let i = 0; i < res[futureDate].length; i++) {
-        name = res[futureDate][i].summary;
-        start = res[futureDate][i].start.dateTime;
-        for (let i = 0; start.length; i++) {
-          if (start[i] === 'T') {
-            start = start[i+1] + start[i+2] + start[i+3] + start[i+4] + start[i+5];
-            break
+      if (!(futureDate[4] + futureDate[5] === '13') && 
+          !(futureDate[4] + futureDate[5] === '20') && 
+          !(futureDate[4] + futureDate[5] === '27')) {
+        let name = '';
+        let start = '';
+        let startHour = '';
+        let end = '';
+        let endHour = '';
+        // console.log(res);
+        // console.log(res[futureDate]);
+        // console.log('Right before for loop: ', futureDate);
+        for (let i = 0; i < res[futureDate].length; i++) {
+          name = res[futureDate][i].summary;
+          start = res[futureDate][i].start.dateTime;
+          for (let i = 0; start.length; i++) {
+            if (start[i] === 'T') {
+              start = start[i+1] + start[i+2] + start[i+3] + start[i+4] + start[i+5];
+              break
+            }
           }
-        }
-        // console.log(start);
-        startHour = start[0] + start[1];
-        // console.log(startHour);
-        startHour = parseInt(startHour);
-        // console.log(startHour);
-        if (startHour > 12) {
-          startHour -= 12;
+          // console.log(start);
+          startHour = start[0] + start[1];
           // console.log(startHour);
-          start = startHour.toString() + start[2] + start[3] + start[4] + 'pm';
-        } else if (startHour === 12) {
+          startHour = parseInt(startHour);
           // console.log(startHour);
-          start = startHour.toString() + start[2] + start[3] + start[4] + 'pm';
-        } else {
-          start += 'am';
-        }
-
-        end = res[futureDate][i].end.dateTime;
-        for (let i = 0; end.length; i++) {
-          if (end[i] === 'T') {
-            end = end[i+1] + end[i+2] + end[i+3] + end[i+4] + end[i+5];
-            break
+          if (startHour > 12) {
+            startHour -= 12;
+            // console.log(startHour);
+            start = startHour.toString() + start[2] + start[3] + start[4] + 'pm';
+          } else if (startHour === 12) {
+            // console.log(startHour);
+            start = startHour.toString() + start[2] + start[3] + start[4] + 'pm';
+          } else {
+            start += 'am';
           }
-        }
-        endHour = end[0] + end[0+1];
-        endHour = parseInt(endHour);
-        if (endHour > 12) {
-          end = (endHour-12).toString() + end[2] + end[3] + end[4] + 'pm';
-        } else if (endHour === 12) {
-          // console.log(startHour);
-          end = endHour.toString() + end[2] + end[3] + end[4] + 'pm';
-        } else {
-          end += 'am';
-        }
+
+          end = res[futureDate][i].end.dateTime;
+          for (let i = 0; end.length; i++) {
+            if (end[i] === 'T') {
+              end = end[i+1] + end[i+2] + end[i+3] + end[i+4] + end[i+5];
+              break
+            }
+          }
+          endHour = end[0] + end[0+1];
+          endHour = parseInt(endHour);
+          if (endHour > 12) {
+            end = (endHour-12).toString() + end[2] + end[3] + end[4] + 'pm';
+          } else if (endHour === 12) {
+            // console.log(startHour);
+            end = endHour.toString() + end[2] + end[3] + end[4] + 'pm';
+          } else {
+            end += 'am';
+          }
 
 
-        let event = document.createElement('div');
-        event.innerText = name + '\n' + start + '-' + end;
-        event.classList.add('individualEvents');
-        document.getElementById('events').appendChild(event);
+          let event = document.createElement('div');
+          event.innerText = name + '\n' + start + '-' + end;
+          event.classList.add('individualEvents');
+          document.getElementById('events').appendChild(event);
+        }
       }
     }
 
@@ -177,6 +202,7 @@ fetch('http://slack-server.elasticbeanstalk.com/calendar/LA/32')
         day = 'Saturday'
       } else if (day === 0) {
         day = 'Sunday';
+        index--;
       }
       date.innerText = currentDate + '\n' + day;
       document.getElementById('dateContainer').appendChild(date);
@@ -214,7 +240,8 @@ fetch('http://slack-server.elasticbeanstalk.com/calendar/LA/32')
     let nextDate = '';
     let previousDate = '';
     function lButtonClick() {
-      if (index > minIndex) {
+      currentDateValue = convert(currentDate);
+      if (currentDateValue > minDateValue) {
         index--;
         // console.log(currentDate);
 
@@ -269,9 +296,12 @@ fetch('http://slack-server.elasticbeanstalk.com/calendar/LA/32')
 
 
     function rButtonClick() {
-      if (index < maxIndex) {
+      currentDateValue = convert(currentDate);
+      if (currentDateValue < maxDateValue) {
         index++;
         // Update next date
+        console.log('Before evaluating: ', currentDate[4] + currentDate[5]);
+        console.log(index, maxIndex);
         if (currentDate[4] + currentDate[5] === '31') {
           nextDate = 'Nov 01 2019';
         } else if (currentDate[5] !== "9") {
@@ -299,6 +329,7 @@ fetch('http://slack-server.elasticbeanstalk.com/calendar/LA/32')
           }
         }
         currentDate = nextDate;
+        console.log('After evaluating: ', currentDate[4] + currentDate[5])
         nextDate = '';
 
         // Delete previous date
@@ -324,8 +355,37 @@ fetch('http://slack-server.elasticbeanstalk.com/calendar/LA/32')
       rButtonClick();
     }
 
+    document.addEventListener("keydown", function(event) {
+      // console.log(event);
+      // console.log(event.keyCode);
+      if (event.keyCode === 37 || event.keyCode === 65) {
+        lButtonClick();
+      } else if (event.keyCode === 39 || event.keyCode === 68) {
+        rButtonClick();
+      }
+    })
 
+    let currentDay = (new Date()).getDate().toString();
+    if (currentDay.length === 0) {
+      currentDay = '0' + currentDay;
+    }
+    let month = (new Date().getMonth() + 1).toString();
+    if (month === '10') {
+      month = 'Oct';
+    } else if (month === '11') {
+      month = 'Nov';
+    }
+    let today = month + ' ' + currentDay + ' ' + '2019'
 
-
+    function recurseToToday() {
+      if (today === currentDate) {
+        return;
+      } else {
+        // console.log(currentDate);
+        rButtonClick();
+        recurseToToday();
+      }
+    }
+    recurseToToday();
 
   });
